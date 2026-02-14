@@ -5,20 +5,21 @@
 
 trigger: none
 
-pool: MARA PAHLA AGENT POOL
+pool:
+  name: 'MARA PAHLA AGENT POOL'
 
-
-  inputs:
-    targetType: 'inline'
-    script: 'Write-Host "Hello World"'
+steps:
 
 - task: TerraformInstaller@1
   inputs:
     terraformVersion: 'latest'
 
-steps:- task: PowerShell@2
+- task: PowerShell@2
   inputs:
     targetType: 'inline'
     script: |
-      $(System.DefaultWorkingDirectory)/root
+      cd $(System.DefaultWorkingDirectory)
+      terraform --version
       terraform init
+
+
