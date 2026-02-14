@@ -18,7 +18,7 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      cd $(System.DefaultWorkingDirectory)
+      cd $(System.DefaultWorkingDirectory)/root
       terraform --version
       terraform init
 
