@@ -5,27 +5,32 @@
 
 trigger: none
 
-pool:
-  name: 'MARA PAHLA AGENT POOL'
+pool: MARA PAHLA AGENT POOL
 
 steps:
 
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: 'write-Host "Hello World"'
+
 - task: TerraformInstaller@1
+
   inputs:
     terraformVersion: 'latest'
 
-- task: PowerShell@2
-displayname: terraform initwa
+- task: TerraformTask@5
   inputs:
-    targetType: 'inline'
-    script: |
-      cd $(System.DefaultWorkingDirectory)/root
-      terraform --version
-      terraform init
-
+    provider: 'azurerm'
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/root'
+    backendServiceArm: 'workload identity federation'
+    backendAzureRmOverrideSubscriptionID: 'satya-rg1'
+    backendAzureRmStorageAccountName: 'satyastorage6'
+    backendAzureRmContainerName: 'satyacontainers'
+    backendAzureRmKey: 'satya.tf'
 
 - task: TerraformTask@5
-displayname: terraform planwa
   inputs:
     provider: 'azurerm'
     command: 'plan'
@@ -33,13 +38,15 @@ displayname: terraform planwa
     environmentServiceNameAzureRM: 'workload identity federation'
 
 - task: TerraformTask@5
-displayname: terraform applywa
   inputs:
     provider: 'azurerm'
     command: 'apply'
     workingDirectory: '$(System.DefaultWorkingDirectory)/root'
     commandOptions: '--auto-approve'
     environmentServiceNameAzureRM: 'workload identity federation'
+
+
+
 
 
 
