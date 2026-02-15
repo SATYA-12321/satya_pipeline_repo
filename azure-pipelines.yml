@@ -15,6 +15,7 @@ steps:
     terraformVersion: 'latest'
 
 - task: PowerShell@2
+displayname: terraform initwa
   inputs:
     targetType: 'inline'
     script: |
@@ -24,9 +25,21 @@ steps:
 
 
 - task: TerraformTask@5
+displayname: terraform planwa
   inputs:
     provider: 'azurerm'
     command: 'plan'
     workingDirectory: '$(System.DefaultWorkingDirectory)/root'
     environmentServiceNameAzureRM: 'workload identity federation'
+
+- task: TerraformTask@5
+displayname: terraform applywa
+  inputs:
+    provider: 'azurerm'
+    command: 'apply'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/root'
+    commandOptions: '--auto-approve'
+    environmentServiceNameAzureRM: 'workload identity federation'
+
+
 
