@@ -13,6 +13,23 @@ variables:
   config_path: '$(System.DefaultWorkingDirectory)/root'
   backend_svc: 'workload identity federation'
 
+
+parameters: 
+  - name: runinit
+    displayName: "run terraform init"
+    type: boolean
+    default: false
+
+  - name: runplan
+    displayName: "run terraform plan"
+    type: boolean
+    default: false
+
+  - name: runapply
+    displayName: "run terraform apply"
+    type: boolean
+    default: false
+
 steps:
 
 - task: PowerShell@2
