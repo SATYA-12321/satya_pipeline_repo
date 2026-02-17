@@ -32,46 +32,45 @@ parameters:
 
 steps:
 
-- task: PowerShell@2
-  displayName: powershell wa
-  inputs:
-    targetType: 'inline'
-    script: 'write-Host "Hello World"'
-
 - task: TerraformInstaller@1
   displayName: terraform installerwa
 
   inputs:
     terraformVersion: 'latest'
 
-- task: TerraformTask@5
-  displayName: terraform initwa
-  inputs:
-    provider: 'azurerm'
-    command: 'init'
-    workingDirectory: $(config_path)
-    backendServiceArm: $(backend_svc)
-    backendAzureRmOverrideSubscriptionID: 'satya-rg1'
-    backendAzureRmStorageAccountName: 'satyastorage6'
-    backendAzureRmContainerName: 'satyacontainers'
-    backendAzureRmKey: 'satya.tf'
 
-- task: TerraformTask@5
-  displayName: terraform planwa
-  inputs:
-    provider: 'azurerm'
-    command: 'plan'
-    workingDirectory: $(config_path)
-    environmentServiceNameAzureRM: $(backend_svc)
+- ${{ if eq(parameters.runInit, true) }}:
+  - task: TerraformTask@5
+    displayName: terraform initwa
+    inputs:
+      provider: 'azurerm'
+      command: 'init'
+      workingDirectory: $(config_path)
+      backendServiceArm: $(backend_svc)
+      backendAzureRmOverrideSubscriptionID: 'satya-rg1'
+      backendAzureRmStorageAccountName: 'satyastorage6'
+      backendAzureRmContainerName: 'satyacontainers'
+      backendAzureRmKey: 'satya.tf'
 
-- task: TerraformTask@5
-  displayName: terraform applywa
-  inputs:
-    provider: 'azurerm'
-    command: 'apply'
-    workingDirectory: $(config_path)
-    commandOptions: '--auto-approve'
-    environmentServiceNameAzureRM: $(backend_svc)
+
+- ${{ if eq(parameters.runPlan, true) }}:
+  - task: TerraformTask@5
+    displayName: terraform planwa
+    inputs:
+      provider: 'azurerm'
+      command: 'plan'
+      workingDirectory: $(config_path)
+      environmentServiceNameAzureRM: $(backend_svc)
+
+- ${{ if eq(parameters.runApply, true) }}:
+  - task: TerraformTask@5
+    displayName: terraform applywa
+    inputs:
+      provider: 'azurerm'
+      command: 'apply'
+      workingDirectory: $(config_path)
+      commandOptions: '--auto-approve'
+      environmentServiceNameAzureRM: $(backend_svc)
 
 
 
