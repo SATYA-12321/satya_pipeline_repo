@@ -4,53 +4,65 @@ trigger: none
 
 pool: MARA PAHLA AGENT POOL
 
+
+variables:
+  config_path: '$(System.DefaultWorkingDirectory)/root'
+  backend_svc: 'workload identity federation'
+
 steps:
 
 - task: PowerShell@2
+  displayName: powershell 
   inputs:
     targetType: 'inline'
     script: 'Write-Host "Shree Shivay Namastubhyam"'
 
 - task: TerraformInstaller@1
+  displayName: terraform installer wa
   inputs:
     terraformVersion: 'latest'
 
 - task: TerraformTask@5
+  displayName: terraform initwa
   inputs:
     provider: 'azurerm'
     command: 'init'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/root'
-    backendServiceArm: 'workload identity federation'
+    workingDirectory: '$(config_path)'
+    backendServiceArm: '$(backend_svc)'
     backendAzureRmResourceGroupName: 'saty-rg1'
     backendAzureRmStorageAccountName: 'satyastorage6'
     backendAzureRmContainerName: 'satyacontainers'
     backendAzureRmKey: 'satya.tf'
 
 - task: TerraformTask@5
+  displayName: terraform validatewa
   inputs:
     provider: 'azurerm'
     command: 'validate'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/root'
+    workingDirectory: '$(backend_svc)'
 
 - task: TerraformTask@5
+  displayName: terraform planwa
   inputs:
     provider: 'azurerm'
     command: 'plan'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/root'
-    environmentServiceNameAzureRM: 'workload identity federation'
+    workingDirectory: '$(config_path)'
+    environmentServiceNameAzureRM: '$(backend_svc)'
 
 - task: TerraformTask@5
+  displayName: terraform show wa
   inputs:
     provider: 'azurerm'
     command: 'show'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/root'
+    workingDirectory: '$(config_path)'
     outputTo: 'console'
     outputFormat: 'default'
-    environmentServiceNameAzureRM: 'workload identity federation'
+    environmentServiceNameAzureRM: '$(backend_svc)'
 
 - task: TerraformTask@5
+  displayName: terraform apply
   inputs:
     provider: 'azurerm'
     command: 'apply'
-    workingDirectory: '$(System.DefaultWorkingDirectory)/root'
-    environmentServiceNameAzureRM: 'workload identity federation'
+    workingDirectory: '$(config_path)'
+    environmentServiceNameAzureRM: '$(backend_svc)'
