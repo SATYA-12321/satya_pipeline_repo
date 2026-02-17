@@ -6,42 +6,40 @@ trigger: none
 
 pool: MARA PAHLA AGENT POOL
 
-# You can specify variables at the pipeline, stage, or job level.
-
 variables:
-
   config_path: '$(System.DefaultWorkingDirectory)/root'
   backend_svc: 'workload identity federation'
 
-
 parameters: 
-  - name: runinit
-    displayName: "run terraform init"
-    type: boolean
-    default: false
+- name: runInit
+  displayName: "Run Terraform Init"
+  type: boolean
+  default: false
 
-  - name: runplan
-    displayName: "run terraform plan"
-    type: boolean
-    default: false
+- name: runPlan
+  displayName: "Run Terraform Plan"
+  type: boolean
+  default: false
 
-  - name: runapply
-    displayName: "run terraform apply"
-    type: boolean
-    default: false
+- name: runApply
+  displayName: "Run Terraform Apply"
+  type: boolean
+  default: false
 
-steps:
+jobs:
 
-- task: TerraformInstaller@1
-  displayName: terraform installerwa
+# ---------------- INIT JOB ----------------
+- job: Terraform_Init
+  displayName: "Terraform Init Job"
+  condition: eq('${{ parameters.runInit }}', true)
+  steps:
+  - task: TerraformInstaller@1
+    displayName: terraform installer
+    inputs:
+      terraformVersion: 'latest'
 
-  inputs:
-    terraformVersion: 'latest'
-
-
-- ${{ if eq(parameters.runInit, true) }}:
   - task: TerraformTask@5
-    displayName: terraform initwa
+    displayName: terraform init
     inputs:
       provider: 'azurerm'
       command: 'init'
@@ -52,27 +50,44 @@ steps:
       backendAzureRmContainerName: 'satyacontainers'
       backendAzureRmKey: 'satya.tf'
 
+# ---------------- PLAN JOB ----------------
+- job: Terraform_Plan
+  displayName: "Terraform Plan Job"
+  dependsOn: Terraform_Init
+  condition: eq('${{ parameters.runPlan }}', true)
+  steps:
+  - task: TerraformInstaller@1
+    displayName: terraform installer
+    inputs:
+      terraformVersion: 'latest'
 
-- ${{ if eq(parameters.runPlan, true) }}:
   - task: TerraformTask@5
-    displayName: terraform planwa
+    displayName: terraform plan
     inputs:
       provider: 'azurerm'
       command: 'plan'
       workingDirectory: $(config_path)
       environmentServiceNameAzureRM: $(backend_svc)
 
-- ${{ if eq(parameters.runApply, true) }}:
+# ---------------- APPLY JOB ----------------
+- job: Terraform_Apply
+  displayName: "Terraform Apply Job"
+  dependsOn: Terraform_Plan
+  condition: eq('${{ parameters.runApply }}', true)
+  steps:
+  - task: TerraformInstaller@1
+    displayName: terraform installer
+    inputs:
+      terraformVersion: 'latest'
+
   - task: TerraformTask@5
-    displayName: terraform applywa
+    displayName: terraform apply
     inputs:
       provider: 'azurerm'
       command: 'apply'
       workingDirectory: $(config_path)
       commandOptions: '--auto-approve'
       environmentServiceNameAzureRM: $(backend_svc)
-
-
 
 
 
