@@ -9,6 +9,27 @@ variables:
   config_path: '$(System.DefaultWorkingDirectory)/root'
   backend_svc: 'workload identity federation'
 
+parameters:
+- name: runInit
+  displayName: "Terraform INIT chalana hai?"
+  type: boolean
+  default: true
+
+- name: runValidate
+  displayName: "Terraform VALIDATE chalana hai?"
+  type: boolean
+  default: true
+
+- name: runPlan
+  displayName: "Terraform PLAN chalana hai?"
+  type: boolean
+  default: true
+
+- name: runApply
+  displayName: "Terraform APPLY chalana hai?"
+  type: boolean
+  default: false
+
 steps:
 
 - task: PowerShell@2
