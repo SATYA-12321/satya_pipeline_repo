@@ -13,17 +13,17 @@ parameters:
 - name: runInit
   displayName: "Terraform INIT chalana hai?"
   type: boolean
-  default: true
+  default: false
 
 - name: runValidate
   displayName: "Terraform VALIDATE chalana hai?"
   type: boolean
-  default: true
+  default: false
 
 - name: runPlan
   displayName: "Terraform PLAN chalana hai?"
   type: boolean
-  default: true
+  default: false
 
 - name: runApply
   displayName: "Terraform APPLY chalana hai?"
